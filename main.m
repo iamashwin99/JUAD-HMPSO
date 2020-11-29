@@ -1,12 +1,3 @@
-%**************************************************************************************************
-%Author: Yong Wang
-%Last Edited: 01/09/2008
-%Email: ywang@csu.edu.cn; wangyong1226@gmail.com
-%Reference:          A Hybrid Multi-Swarm Particle Swarm Optimization to Solve
-%                                             Constrained Optimization Problems
-%                              Frontiers of Computer Science in China, 2009, 3(1):38-52.
-%**************************************************************************************************
-
 % profile on;
 
 clc;
@@ -15,20 +6,41 @@ tic;
 
 format long;
 format compact;
+% Define M and N M-Number of cue N-number of due Ensure M>N
+M = 10;%10
+N = 4;%4
+%Solution is of len 4m+n m-cue n-due
 
-% choose which problem to be tested
-problemSet = [1 : 19 21 23 24];
+%
+pimax = 100;
+pjmax = 100;
+pbsmax = 1000;
+
+% The size of the main swarm
+popsize = 180; %60
+% The size of each sub-swarm
+subpopsize = 8; %8
+
+% The tolerance value for equality constraints
+delta = 0.0001;
+
+totalGen = 800000/ 2 / popsize; %300000/ 2 / popsize;
+% The parameter settings for DE
+F = 0.7;
+CR = 1.0;
+
+% To modify parameters like Gjb,Gbj,Gib,Gbi,Gji,Gij,Gii,gammaireq, gammajrequ,gammajreqd GO TO inter2.m
 
 
-    problem = problemSet(problemIndex)
-
-    % Record the best results
+%%%%%%%%%%%%%%%%%%%% Dont modify lines below if you dont knwo what it does
+% Record the best results
     bestResults = [];
     
     % Record the feasibility proportion of the final swarm
     feasiPro = [];
 
     time = 1;
+    problem = 1; %default problem off JUAD
     
     % The total number of runs
     totalTime = 1;
@@ -40,30 +52,42 @@ problemSet = [1 : 19 21 23 24];
             case 1
 
                 % min_var and max_var define the lower and upper bounds of the particle, respectively
-                min_var = [0 0 0 0 0 0 0 0 0 0 0 0 0]; max_var = [1 1 1 1 1 1 1 1 1 100 100 100 1];
+                %min_var = [0 0 0 0 0 0 0 0 0 0 0 0 0]; max_var = [1 1 1 1 1 1 1 1 1 100 100 100 1];
+                for iter=(1:M)
+                    min_var(iter) = 0; %% Bound for rhou lbest
+                    max_var(iter) = N;
+                    
+                    min_var(iter+M) = 0; %%  Bound for rhod lbest
+                    max_var(iter+M) = N;
+                    
+                    min_var(iter+2*M) = 0; %%  Bound for Pj lbest
+                    max_var(iter+2*M) = pjmax;
+                    
+
+                    min_var(iter+3*M) = 0; %%  Bound for Pbs lbest
+                    max_var(iter+3*M) = pbsmax;
+                    
+                end
+                for iter=(1:N)
+                    min_var(iter+4*M) = 0; %%  Bound for Pbs lbest
+                    max_var(iter+4*M) = pimax;
+                end
                 % n is the dimension of the particle
-                n = 13;
+                n=4*M+N; %n = 13;
                 A = []; %\\\\ - 15\
 
         end
 
         rand('seed', sum(100 * clock));
 
-        % The size of the main swarm
-        popsize = 60;
-        % The size of each sub-swarm
-        subpopsize = 8;
-
-        % The tolerance value for equality constraints
-        delta = 0.0001;
-
-        totalGen = 300000/ 2 / popsize;
+        
 
         % Initialize the main swarm
         p = ones(popsize, 1) * min_var + rand(popsize, n) .* (ones(popsize, 1) * (max_var - min_var));
 
         % Evaluate the main swatm
-        fit = fitness(p, problem, delta, A);
+        %fit = fitness(p, problem, delta, A);
+        fit = inter(p,M,N);
 
         % Determine the pbest
         pbest = p;
@@ -83,15 +107,14 @@ problemSet = [1 : 19 21 23 24];
                 X = pbest(i, :);
                 fitX = fitPbest(i, :);
 
-                % The parameter settings for DE
-                F = 0.7;
-                CR = 1.0;
+                
 
                 % Implement DE to generate the trial vector
                 U = mutation(pbest, [min_var; max_var], i, popsize, n, X, F, CR);
 
                 % Evaluate the trial vector
-                fitU = fitness(U, problem, delta, A);
+                %fitU = fitness(U, problem, delta, A);
+                fitU = inter(U,M,N);
 
                 % Choose the better one (the feasibility criterion) between
                 % the trial vector and the target vector to enter the next population
@@ -244,7 +267,8 @@ problemSet = [1 : 19 21 23 24];
             fitPbest = [fitPbest; fitPbest_];
 
             % Evaluate the swarm
-            fit = fitness(p, problem, delta, A);
+            %fit = fitness(p, problem, delta, A);
+            fit = inter(p,M,N);
 
             % Update the pbest of each particle based on the feasibility
             % criterion
@@ -294,4 +318,49 @@ problemSet = [1 : 19 21 23 24];
 
 toc;
 
+A_rhou=zeros(N,M);
+A_rhod=zeros(N,M);
+A_pj=zeros(1,M);
+A_pbs=zeros(1,M);
+A_pi=zeros(1,N);
 % profview
+for iter=(1:M)
+    if lbest(iter)<0.5
+        ;
+    elseif lbest(iter)>N+0.5
+           ;
+    else
+        K=round(lbest(iter));
+        A_rhou(K,iter)=1;
+    end
+    if lbest(iter+M)<0.5
+        ;
+    elseif lbest(iter+M)>N+0.5
+            ;
+    else
+        K=round(lbest(iter+M));
+        A_rhod(K,iter)=1;
+    end
+    if lbest(2*M+iter)<0
+        A_pj(iter)=0;
+    else
+        A_pj(iter)=lbest(2*M+iter);
+    end
+    if lbest(3*M+iter)<0
+        A_pbs(iter)=0;
+    else
+        Apbs(iter)=lbest(3*M+iter);
+    end
+end
+for iter=(1:N)
+    if lbest(4*M+iter)<0
+        A_pi(iter)=0;
+    else
+        A_pi(iter)=lbest(4*M+iter);
+    end
+end
+runiter=inter2(lbest,M,N);
+A_Rsum=runiter(1);
+A_constraints=runiter(2);
+disp('Bit rate of lbest is :')
+disp(-1*A_Rsum)

@@ -1,0 +1,1101 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\begin_preamble
+% Variables to change every new document
+\newcommand{\hmwkClass}{EEE F431} % Course/class
+\newcommand{\hmwkNumber}{1} % Assignment number
+
+% Constants to set once
+\newcommand{\hmwkAuthorName}{Ashwin Kumar K, Shashwat Avasti} % Your name
+\newcommand{\hmwkUserID}{ID} % User ID
+\newcommand{\hmwkStudentNumber}{2017B5A81034G, 2017B30459G} % Student number
+
+% Packages
+\usepackage{fancyhdr} % Required for custom headers
+\usepackage{lastpage} % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
+
+% Margins
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+% General document properties
+\linespread{1.1} % Line spacing
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+
+% Required to not count titlepage in page numbering
+\addtocounter {page} {-1}
+
+% Make a simple command for use in document body
+\newcommand{\start}{
+\maketitle
+\thispagestyle{empty}
+\newpage
+}
+
+% Set up the header and footer
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName} % Top left header
+\rhead{\hmwkClass:\ Simulation Assignment-JUAD}
+\lfoot{\lastxmark} % Bottom left footer
+\cfoot{} % Bottom center footer
+\rfoot{Page\ \thepage\ of\ \protect\pageref{LastPage}} % Bottom right footer
+\renewcommand\headrulewidth{0.4pt} % Size of the header rule
+\renewcommand\footrulewidth{0.4pt} % Size of the footer rule
+
+% The following 2 commands setup the title page
+\title{
+\vspace{2in}
+\textmd{\textbf{\hmwkClass:\ Simulation Assignment Report\ \newline Joint Uplink and Downlink Resource Allocation for D2D Communications Underlying Cellular Networks}}\\
+\normalsize\vspace{0.1in}\small{ \today }\\
+\vspace{3in}
+}
+
+\author{
+  \textbf{\hmwkAuthorName} \\
+  \texttt{\hmwkUserID \hspace{0.1in}- \hmwkStudentNumber}
+}
+
+% Do not display standard date since we use a custom date
+\date{}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 0
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip bigskip
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+start
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+About the problem
+\end_layout
+
+\begin_layout Standard
+The problem presented to us was an optimization problem that required the
+ maximization of bit rate across all shareholders in the system, ie cellular
+ uses and DUEs.
+ This problem by its very construction is nonlinear, to be specific, mixed
+ integer nonlinear programming problem.
+ The problem does not admit any closed form allotment solution, and the
+ context in which the problem exists lends exhaustive search completely
+ useless, since any allotment needs to be done within the coherence time
+ of the channels which is of the order of microseconds.
+ A detailed description of the problem is as follows.
+\end_layout
+
+\begin_layout Subsection
+System Model
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+We consider a single-cell network with one BS and a number of CUEs coexisting
+ with multiple DUEs.
+ The BS is responsible for allocating subcarrier resources to both CUEs
+ and DUEs.
+ We use $j$, $i$ to represent the CUE $j$, DUE $i$, and $j
+\backslash
+in{
+\backslash
+cal C}=
+\backslash
+{1,2,
+\backslash
+ldots,M
+\backslash
+}$, $i
+\backslash
+in{
+\backslash
+cal D}=
+\backslash
+{1,2,
+\backslash
+ldots,N
+\backslash
+}$, respectively.
+ We assume that the cellular network adopts Frequency Division Duplexing
+ (FDD) in which the uplink and the downlink subcarriers respectively occupy
+ half of the whole spectrum.
+ Moreover, we assume each CUE has been pre-allocated one orthogonal uplink
+ subcarrier and one orthogonal downlink subcarrier.
+ To manage interference, we assume each subcarrier (either uplink or downlink)
+ could be reused by at most one DUE and each DUE could reuse at most one
+ subcarrier.
+\end_layout
+
+\begin_layout Plain Layout
+
+We assume that all links experience not only the slow shadowing and path
+ loss but also the fast fading caused by multi-path propagation as in .
+ That is, the instantaneous channel gain between CUE $j$ and the BS is modeled
+ as
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{equation} 
+\backslash
+begin{array}{l} {g_{j,B}} = G{
+\backslash
+beta _{j,B}}{
+\backslash
+Gamma _{j,B}}l_{j,B}^{ - 
+\backslash
+alpha } 
+\backslash
+end{array} 
+\backslash
+end{equation} where $G$, ${
+\backslash
+beta _{j,B}}$, ${
+\backslash
+Gamma _{j,B}}$, ${l_{j,B}}$,  and $
+\backslash
+alpha$  are the path loss constant, fast fading gain with exponential distributi
+on, slow fading gain with log-normal distribution, distance between CU and
+ BS,  and the path loss exponent, respectively.
+ Similarly, we define $g_{B,j}$, $g_{i,B}$, $g_{B,i}$, $g_{j,i}$, $g_{i,j}$,
+ and $g_{i,i}$ as the channel gain between the BS and the CUE $j$, between
+ the DUE $i$ and the BS, between the BS and DUE $i$, between the CUE $j$
+ and DUE $i$, between the DUE $i$ and CUE $j$, between the D2D transmitter
+ and the D2D receiver, respectively.
+ We assume that the BS has the perfect channel state information (CSI) of
+ all the links involved so that it can design a centralized resource allocation
+ scheme
+\end_layout
+
+\begin_layout Plain Layout
+
+Define binary variables ${
+\backslash
+rho _{i,j}^u}$ and ${
+\backslash
+rho _{i,j}^d}$, if DUE $i$ reuses the uplink subcarrier of CUE $j$ then
+ ${
+\backslash
+rho _{i,j}^u=1}$, otherwise ${
+\backslash
+rho _{i,j}^u=0}$.
+ Similarly, if DUE $i$ reuses the downlink subcarrier of CUE $j$ then ${
+\backslash
+rho _{i,j}^d=1}$, otherwise ${
+\backslash
+rho _{i,j}^d=0}$.
+ The received signal to interference-plus-noise-ratio (SINR) for CUE $j$
+ can be given by
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{equation} 
+\backslash
+begin{array}{l} 
+\backslash
+gamma _j^u = 
+\backslash
+frac{{p_j^{}g_{j,B}^{}}}{{
+\backslash
+sum
+\backslash
+limits_{i = 1}^N {
+\backslash
+rho _{i,j}^up_{i}g_{_{i,B}}^{}}  + {N_0}}},{
+\backslash
+rm{ }}
+\backslash
+gamma _j^d = 
+\backslash
+frac{{p_{B,j}^{}g_{_{B,j}}^{}}}{{
+\backslash
+sum
+\backslash
+limits_{i = 1}^N {
+\backslash
+rho _{i,j}^dp_{i}g_{_{i,j}}^{}}  + {N_0}}} 
+\backslash
+end{array} 
+\backslash
+end{equation} where ${p_j}$,  $p_{i}$, and  $p_{B,j}$ denote the transmit
+ power of CUE $j$, the transmit power of DUE $i$, and the transmit power
+ from the BS to CUE $j$, respectively.
+ ${N_0}$ is the variance of zero mean Additive White Gaussian Noise (AWGN).
+\end_layout
+
+\begin_layout Plain Layout
+
+Therefore, the achieveable uplink data rate and the achieveable downlink
+ data rate for CUE $j$ can be respectively expressed as 
+\backslash
+begin{equation} 
+\backslash
+begin{array}{l} 
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+! 
+\backslash
+!
+\backslash
+! 
+\backslash
+!
+\backslash
+!{R_j^u} = {{{
+\backslash
+log }_2}(1 + 
+\backslash
+gamma _j^u)} 
+\backslash
+end{array} 
+\backslash
+end{equation} 
+\backslash
+begin{equation} 
+\backslash
+begin{array}{l} 
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+! 
+\backslash
+!
+\backslash
+! 
+\backslash
+!
+\backslash
+!{R_j^d} = {{{
+\backslash
+log }_2}(1 + 
+\backslash
+gamma _j^d)}.
+ 
+\backslash
+end{array} 
+\backslash
+end{equation}
+\end_layout
+
+\begin_layout Plain Layout
+
+Similarly, the SINR of the DUE $i$ can be expressed as
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{equation} 
+\backslash
+begin{array}{l} {
+\backslash
+gamma _i} = 
+\backslash
+frac{{p{}_i{g_{i,i}}}}{{
+\backslash
+underbrace {
+\backslash
+sum
+\backslash
+limits_{j = 1}^N {
+\backslash
+rho _{i,j}^u{p_j}{g_{j,i}}} }_{{
+\backslash
+text{if DUE reuses an uplink subcarrier}}} + 
+\backslash
+underbrace {
+\backslash
+sum
+\backslash
+limits_{j = 1}^N {
+\backslash
+rho _{i,j}^d{p_{B,j}}{g_{B,i}}} }_{{
+\backslash
+text{if DUE reuses a downlink subcarrier}}} + {N_0}}}, 
+\backslash
+end{array} 
+\backslash
+end{equation} and the achieveable data rate of DUE $i$ can be given by 
+\backslash
+begin{equation} 
+\backslash
+begin{array}{l} 
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+! 
+\backslash
+!
+\backslash
+! 
+\backslash
+!
+\backslash
+!{R_i} =  { { {{{
+\backslash
+log }_2}(1 + 
+\backslash
+gamma _{i})} } }, 
+\backslash
+end{array} 
+\backslash
+end{equation} and the sum data rate of the overall system is 
+\backslash
+begin{equation} 
+\backslash
+begin{array}{l} {R_{{
+\backslash
+text {sum}}}} = 
+\backslash
+sum
+\backslash
+limits_{j = 1}^M{R_j^u}+
+\backslash
+sum
+\backslash
+limits_{j = 1}^M{R_j^d} + 
+\backslash
+sum
+\backslash
+limits_{i = 1}^N{R_i}.
+ 
+\backslash
+end{array} 
+\backslash
+end{equation}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Mathematical modeling
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+We find that the optimization problem is essentially the following: 
+\backslash
+begin{equation} 
+\backslash
+begin{array}{l}      {
+\backslash
+cal P}1:
+\backslash
+mathop {
+\backslash
+text{max}} 
+\backslash
+limits_{
+\backslash
+bm{
+\backslash
+rho} ,
+\backslash
+textbf{
+\backslash
+emph{p}}} 
+\backslash
+ {
+\backslash
+rm{ }}{R_{{
+\backslash
+text{sum}}}}
+\backslash
+
+\backslash
+ 
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!
+\backslash
+!{
+\backslash
+text{ s}}{
+\backslash
+text{.t.}}
+\backslash
+ {
+\backslash
+rm{ C1:  }}
+\backslash
+ 
+\backslash
+gamma _j^u 
+\backslash
+ge 
+\backslash
+gamma _j^{u,{
+\backslash
+text {req}}},
+\backslash
+gamma _j^d 
+\backslash
+ge 
+\backslash
+gamma _j^{d,{
+\backslash
+text {req}}}
+\backslash
+ 
+\backslash
+ 
+\backslash
+ 
+\backslash
+forall j 
+\backslash
+in {
+\backslash
+cal C}
+\backslash
+
+\backslash
+ {
+\backslash
+rm{       C2:  }}
+\backslash
+ 
+\backslash
+gamma _{i} 
+\backslash
+ge 
+\backslash
+gamma _{i}^{{
+\backslash
+text {req}}}, 
+\backslash
+forall i 
+\backslash
+in {
+\backslash
+cal D}
+\backslash
+
+\backslash
+ {
+\backslash
+rm{       C3:  }}
+\backslash
+ 0 
+\backslash
+le {p_i}  
+\backslash
+le p_i^{
+\backslash
+text {max} }, 
+\backslash
+ 
+\backslash
+forall i 
+\backslash
+in {
+\backslash
+cal D}
+\backslash
+
+\backslash
+ {
+\backslash
+rm{       C4:  }}
+\backslash
+ 0 
+\backslash
+le {p_j} 
+\backslash
+le p_j^{
+\backslash
+text {max }},  
+\backslash
+forall j 
+\backslash
+in {
+\backslash
+cal C}
+\backslash
+
+\backslash
+ {
+\backslash
+rm{       C5:  }}
+\backslash
+ 0 
+\backslash
+le {p_{B,j}} 
+\backslash
+le p_{B,j}^{
+\backslash
+text {max }},  
+\backslash
+forall j 
+\backslash
+in {
+\backslash
+cal C}
+\backslash
+
+\backslash
+ {
+\backslash
+rm{       C6:  }}
+\backslash
+ 0 
+\backslash
+le 
+\backslash
+sum
+\backslash
+limits_{i = 1}^N {
+\backslash
+rho _{i,j}^u}  
+\backslash
+le {
+\backslash
+rm{1,0}} 
+\backslash
+le 
+\backslash
+sum
+\backslash
+limits_{i = 1}^N {
+\backslash
+rho _{i,j}^d}  
+\backslash
+le {
+\backslash
+rm{1}}, 
+\backslash
+forall j 
+\backslash
+in {
+\backslash
+cal C}
+\backslash
+
+\backslash
+ {
+\backslash
+rm{       C7:  }}
+\backslash
+ 
+\backslash
+left( {
+\backslash
+sum
+\backslash
+limits_{j = 1}^M {
+\backslash
+rho _{i,j}^u} } 
+\backslash
+right)
+\backslash
+left( {
+\backslash
+sum
+\backslash
+limits_{j = 1}^M {
+\backslash
+rho _{i,j}^d} } 
+\backslash
+right) = 0, 
+\backslash
+forall i 
+\backslash
+in {
+\backslash
+cal D}
+\backslash
+
+\backslash
+ {
+\backslash
+rm{       C8:  }}
+\backslash
+  {
+\backslash
+rho _{i,j}^u}, {
+\backslash
+rho _{i,j}^d} 
+\backslash
+in 
+\backslash
+{0,1 
+\backslash
+}, 
+\backslash
+forall i 
+\backslash
+in {
+\backslash
+cal D}, 
+\backslash
+forall j 
+\backslash
+in {
+\backslash
+cal C}.
+ 
+\backslash
+end{array} 
+\backslash
+end{equation}
+\end_layout
+
+\begin_layout Plain Layout
+
+In 
+\backslash
+textbf{${
+\backslash
+cal P}1$}, $
+\backslash
+textbf{
+\backslash
+emph{p}} $ is the set of transmit power including the transmit power of
+ CUEs, DUEs, and the BS, and $
+\backslash
+bm{
+\backslash
+rho}$ is the set of binary variable indicating the subcarrier assignment
+ of DUEs.
+ Constraint $
+\backslash
+text{C1}$ guarantees the data rate requirements of CUEs, where $
+\backslash
+gamma _j^{u,{
+\backslash
+text {req}}}$ and $
+\backslash
+gamma _j^{d,{
+\backslash
+text {req}}}$ denote the uplink and downlink minimum SINR requirements of
+ CUE $j$.
+ Similarly, $
+\backslash
+text{C2}$ guarantees the data rate requirements of DUEs.
+ The constraints $
+\backslash
+text{C3}$, $
+\backslash
+text{C4}$ and $
+\backslash
+text{C5}$  are the power constraints where $p_i^{
+\backslash
+text {max}}$, $p_j^{
+\backslash
+text {max}}$, and $p_{B,j}^{
+\backslash
+text {max}}$ are maximal transmit power of DUE $i$, CUE $j$, and the BS,
+ respectively.
+ Constraint $
+\backslash
+text{C6}$ ensures that each uplink or downlink subcarrier of CUE $j$ can
+ be shared by at most one DUE, and $
+\backslash
+text{C7}$ represents that each DUE can only reuse one uplink or downlink
+ subcarrier.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Our working process
+\end_layout
+
+\begin_layout Standard
+Since any allotment needs to be done within the coherence time of the channels
+ which is of the order of microseconds.
+ It was therefore decided that we will use evolutionary algorithms for finding
+ allotment vectors for resource allocation.
+ These algorithms are much faster than exhaustive search but need not converge
+ to the global optima.
+ Having said that, evolutionary algorithms are able to reach close to optimal
+ solutions.
+ We decided to choose HMPSO, on the advice of our esteemed professor Nitin
+ Sharma.
+ HMPSO is an optimization algorithm that works to improve its score on an
+ evaluation metric.
+ This evaluation metric is called the penalty or fitness function.
+ The fitness function rewards the solution if it meets its objective well,
+ in our case this corresponds to the solution having high bit rate.
+ The fitness function penalizes a solution if it violates some constraint
+ of the optimization problem, in our case this corresponds to the solution
+ violating power constraints and allotment constraints The second aspect
+ of HMPSO is finding a valid initial solution.
+ This initial solution must satisfy all the constraints.
+ We had a very hard time finding an initial solution.
+\end_layout
+
+\begin_layout Section
+Work done so far
+\end_layout
+
+\begin_layout Standard
+The code for HMPSO and JUAD were available from GitHub and we needed to
+ understand their implementation and incorporate the right fitness function
+ in their HMPSO problem set.
+ We were able to code the constraints and fitness function from eq.
+ 8 above, however in order to integrate our needed a deeper understanding
+ of the HMPSO framework.
+ To this extent we consulted our esteemed professor Nitin Sharma on this
+ and we were able to gain a insight into the working of HMPSO code.
+ 
+\end_layout
+
+\begin_layout Standard
+A major challenge we faced during this implementation was taking into account
+ the integer binary variables which were optimization variables but were
+ not easy to incorporate in the HMPSO framework.
+\end_layout
+
+\begin_layout Standard
+Post this we tried to incorporate a intermediate function that tries to
+ interface between the HMPSO frame work and our fitness function.
+ The main objective of the said function would be to take a population that
+ needs to be optimised and then assign each coordinate the equivalent physical
+ property (like 
+\begin_inset Formula $P_{i}$
+\end_inset
+
+, 
+\begin_inset Formula $P_{j}$
+\end_inset
+
+, 
+\begin_inset Formula $P_{B}$
+\end_inset
+
+,
+\begin_inset Formula $\rho^{u}$
+\end_inset
+
+,
+\begin_inset Formula $\rho^{d}$
+\end_inset
+
+) and then map out the derived quantities and pass them on to our fitness
+ function.
+ We did attempt writing the interfacing function however the interfacing
+ function wasn't working as expected at the time of writing this report.
+\end_layout
+
+\begin_layout Standard
+With some more time at hand we would be able to complete this task.
+\end_layout
+
+\end_body
+\end_document
